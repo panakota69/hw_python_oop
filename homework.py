@@ -1,17 +1,14 @@
+from dataclasses import dataclass, asdict
+from typing import Union
+
+
+@dataclass
 class InfoMessage:
-    """Информационное сообщение о тренировке."""
-    def __init__(self,
-                 training_type: str,
-                 duration: float,
-                 distance: float,
-                 speed: float,
-                 calories: float,
-                 ) -> None:
-        self.training_type = training_type
-        self.duration = duration
-        self.distance = distance
-        self.speed = speed
-        self.calories = calories
+    training_type: str
+    duration: float
+    distance: float
+    speed: float
+    calories: float
 
     def get_message(self) -> str:
         return (f'Тип тренировки: {self.training_type}; '
@@ -42,7 +39,7 @@ class Training:
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        return (self.action * self.LEN_STEP / self.duration)
+        return (self.get_distance() / self.duration)
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
@@ -56,7 +53,7 @@ class Training:
             self.get_distance(),
             self.get_mean_speed(),
             self.get_spent_calories()
-        ).get_message()
+        )
 
 
 class Running(Training):
@@ -110,7 +107,7 @@ class Swimming(Training):
 
     def get_mean_speed(self) -> float:
         return ((self.length_pool * self.count_pool)
-                / self.duration / self.M_IN_KM)
+                / self.M_IN_KM / self.duration)
 
     def get_spent_calories(self) -> float:
         return ((self.get_mean_speed() + self.SWIMMING_MEAN_SPEED_SHIFT)
@@ -118,8 +115,8 @@ class Swimming(Training):
                 * self.weight * self.duration)
 
 
-def read_package(workout_type: str, data: list) -> Training:
-    training_types = {
+def read_package(workout_type: str, data: list[Union[int, float]]) -> Training:
+    training_types: dict[str, Training] = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking,
@@ -133,7 +130,7 @@ def read_package(workout_type: str, data: list) -> Training:
 
 def main(training: Training) -> None:
     info = training.show_training_info()
-    print(info)
+    print(info.get_message())
 
 
 if __name__ == '__main__':
