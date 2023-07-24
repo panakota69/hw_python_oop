@@ -9,13 +9,15 @@ class InfoMessage:
     distance: float
     speed: float
     calories: float
+    message = ('Тип тренировки: {}; '
+               'Длительность: {:.3f} ч.; '
+               'Дистанция: {:.3f} км; '
+               'Ср. скорость: {:.3f} км/ч; '
+               'Потрачено ккал: {:.3f}.')
 
     def get_message(self) -> str:
-        return (f'Тип тренировки: {self.training_type}; '
-                f'Длительность: {self.duration:.3f} ч.; '
-                f'Дистанция: {self.distance:.3f} км; '
-                f'Ср. скорость: {self.speed:.3f} км/ч; '
-                f'Потрачено ккал: {self.calories:.3f}.')
+        return self.message.format(self.training_type, self.duration,
+                                   self.distance, self.speed, self.calories)
 
 
 class Training:
@@ -57,8 +59,8 @@ class Training:
 
 
 class Running(Training):
-    CALORIES_MEAN_SPEED_MULTIPLIER = 18
-    CALORIES_MEAN_SPEED_SHIFT = 1.79
+    CALORIES_MEAN_SPEED_MULTIPLIER: int = 18
+    CALORIES_MEAN_SPEED_SHIFT: float = 1.79
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
