@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Union
 
 
@@ -9,15 +9,14 @@ class InfoMessage:
     distance: float
     speed: float
     calories: float
-    message = ('Тип тренировки: {}; '
-               'Длительность: {:.3f} ч.; '
-               'Дистанция: {:.3f} км; '
-               'Ср. скорость: {:.3f} км/ч; '
-               'Потрачено ккал: {:.3f}.')
+    message: str = ('Тип тренировки: {training_type}; '
+                    'Длительность: {duration:.3f} ч.; '
+                    'Дистанция: {distance:.3f} км; '
+                    'Ср. скорость: {speed:.3f} км/ч; '
+                    'Потрачено ккал: {calories:.3f}.')
 
     def get_message(self) -> str:
-        return self.message.format(self.training_type, self.duration,
-                                   self.distance, self.speed, self.calories)
+        return self.message.format(**asdict(self))
 
 
 class Training:
@@ -125,9 +124,8 @@ def read_package(workout_type: str, data: list[Union[int, float]]) -> Training:
     }
     if workout_type not in training_types:
         raise KeyError(f'{workout_type}: Такой тренировки нет!')
-    else:
-        train: Training = training_types[workout_type](*data)
-        return train
+    train: Training = training_types[workout_type](*data)
+    return train
 
 
 def main(training: Training) -> None:
@@ -144,5 +142,4 @@ if __name__ == '__main__':
 
     for workout_type, data in packages:
         training = read_package(workout_type, data)
-        if training is not None:
-            main(training)
+        main(training)
